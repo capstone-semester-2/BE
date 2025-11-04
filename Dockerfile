@@ -1,5 +1,5 @@
 # 도커 이미지 지정
-FROM openjdk:17-jdk-slim
+FROM azul/zulu-openjdk-alpine:17-latest
 
 # 빌드된 파일의 위치를 argument로 지정
 ARG JAR_FILE=./build/libs/demo-0.0.1-SNAPSHOT.jar
