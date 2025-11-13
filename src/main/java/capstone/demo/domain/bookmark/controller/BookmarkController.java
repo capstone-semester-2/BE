@@ -24,7 +24,7 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     @PostMapping("/bookmark")
-    @Operation(summary = "북마크 저장 기능",
+    @Operation(summary = "북마크 저장하기",
             description = "백과사전에서 원하는 항목을 북마크하는 API입니다.")
     public ResponseEntity<ApiResponse<BookmarkResponse>> addBookmark(
             @AuthenticationPrincipal AuthDetails authDetails,
@@ -35,8 +35,8 @@ public class BookmarkController {
     }
 
     @GetMapping("/bookmark/list")
-    @Operation(summary = "수화 사전 무한 스크롤 리스트 조회",
-            description = "lastId 기반으로 무한 스크롤 형식으로 조회합니다.")
+    @Operation(summary = "북마크 리스트 조회하기",
+            description = "북마크 리스트를 lastId 기반 무한 스크롤 형식으로 조회합니다.")
     public ResponseEntity<ApiResponse<List<Dictionary>>> getDictionaryList(
             @AuthenticationPrincipal AuthDetails authDetails,
             @RequestParam(required = false) Long lastId,

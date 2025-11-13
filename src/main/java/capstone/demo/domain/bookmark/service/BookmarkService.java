@@ -24,7 +24,7 @@ public class BookmarkService {
         bookmarkRepository.save(bookmark);
 
         return BookmarkResponse.builder()
-                .id(dictionary.getId())
+                .bookMarkId(dictionary.getId())
                 .message("북마크 저장 성공")
                 .build();
 

@@ -14,7 +14,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query(value = """
     SELECT d.* 
     FROM dictionary d
-    JOIN dictionary_bookmark b ON d.dictionary_id = b.dictionary_id
+    JOIN bookmark b ON d.dictionary_id = b.dictionary_id
     WHERE b.user_id = :userId
     ORDER BY d.dictionary_id DESC
     LIMIT :size
@@ -26,7 +26,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     @Query(value = """
     SELECT d.* 
     FROM dictionary d
-    JOIN dictionary_bookmark b ON d.dictionary_id = b.dictionary_id
+    JOIN bookmark b ON d.dictionary_id = b.dictionary_id
     WHERE b.user_id = :userId
         AND d.dictionary_id < :lastId   
     ORDER BY d.dictionary_id DESC

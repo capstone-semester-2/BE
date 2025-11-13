@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookmarkResponse {
-    private Long id;
+    private Long bookMarkId;
     private String message;
 }
