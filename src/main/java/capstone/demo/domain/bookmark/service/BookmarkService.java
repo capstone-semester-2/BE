@@ -9,6 +9,8 @@ import capstone.demo.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BookmarkService {
@@ -25,6 +27,15 @@ public class BookmarkService {
                 .id(dictionary.getId())
                 .message("북마크 저장 성공")
                 .build();
+
+    }
+
+    public List<Dictionary> getFirstPage(User user, int size) {
+        return bookmarkRepository.getFirstPage(user.getId(), size);
+    }
+
+    public List<Dictionary> getNextPage(User user, Long lastId, int size) {
+        return bookmarkRepository.getNextPage(user.getId(), lastId, size);
 
     }
 }
