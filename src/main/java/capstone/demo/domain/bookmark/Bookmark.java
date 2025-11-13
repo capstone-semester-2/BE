@@ -1,4 +1,5 @@
-package capstone.demo.domain.dictionary;
+package capstone.demo.domain.bookmark;
+import capstone.demo.domain.dictionary.Dictionary;
 import capstone.demo.domain.user.entity.User;
 import capstone.demo.global.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "dictionary_id"}))
-public class DictionaryBookmark extends BaseEntity {
+public class Bookmark extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "dictionary_bookmark_id")

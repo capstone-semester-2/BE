@@ -1,6 +1,7 @@
-package capstone.demo.domain.user.entity;
+package capstone.demo.domain.voice;
 
 import capstone.demo.domain.translate.TranslatedText;
+import capstone.demo.domain.user.entity.User;
 import capstone.demo.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserVoice extends BaseEntity {
+public class Voice extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_voice_id")
