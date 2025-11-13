@@ -1,4 +1,4 @@
-package capstone.demo.domain.translate;
+package capstone.demo.domain.translatedText;
 
 import capstone.demo.domain.user.entity.User;
 import capstone.demo.global.entity.BaseEntity;
