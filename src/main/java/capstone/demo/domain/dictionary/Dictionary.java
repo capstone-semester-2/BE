@@ -19,7 +19,7 @@ public class Dictionary extends BaseEntity {
     private Long id;
 
     @Column(length = 50)
-    private String title;
+    private String gestureName;
 
     @Column(length = 512)
     private String gestureUrl;

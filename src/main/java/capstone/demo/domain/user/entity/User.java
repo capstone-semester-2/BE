@@ -1,6 +1,6 @@
 package capstone.demo.domain.user.entity;
 
-import capstone.demo.domain.dictionary.DictionaryBookmark;
+import capstone.demo.domain.bookmark.Bookmark;
 import capstone.demo.domain.user.LoginType;
 import capstone.demo.domain.user.UserRole;
 import capstone.demo.global.entity.BaseEntity;
@@ -41,5 +41,5 @@ public class User extends BaseEntity {
     private LoginType loginType;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-    private List<DictionaryBookmark> bookmarks = new ArrayList<>();
+    private List<Bookmark> bookmarks = new ArrayList<>();
 }
