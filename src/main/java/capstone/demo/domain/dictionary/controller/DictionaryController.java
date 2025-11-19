@@ -38,5 +38,15 @@ public class DictionaryController {
     }
 
 
+    @GetMapping("/dictionary/search")
+    @Operation(summary = "수화 사전 검색",
+            description = "입력 키워드 기반으로 모든 검색 결과를 반환합니다.")
+    public ResponseEntity<ApiResponse<List<Dictionary>>> searchDictionary(
+            @RequestParam String keyword
+    ) {
+        List<Dictionary> result = dictionaryService.searchAll(keyword);
+
+        return ResponseEntity.ok(ApiResponse.onSuccess(result));
+    }
 
 }

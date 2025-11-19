@@ -28,4 +28,9 @@ public interface DictionaryRepository extends JpaRepository<Dictionary, Long> {
                                   @Param("size") int size);
 
 
+    @Query(value = "SELECT * FROM dictionary " +
+            "WHERE gesture_name LIKE %:keyword% " +
+            "ORDER BY dictionary_id DESC",
+            nativeQuery = true)
+    List<Dictionary> findAllByKeyword(String keyword);
 }

@@ -16,10 +16,10 @@ public class SwaggerConfig {
     private String contextPath;
 
     @Bean
-    public OpenAPI teamficialAPI() {
+    public OpenAPI reVoiceAPI() {
         Info info = new Info()
-                .title("Teamficial API")
-                .description("Teamfical API 명세서")
+                .title("reVoice API")
+                .description("reVoice API 명세서")
                 .version("1.0.0");
 
         String jwtSchemeName = "JWT TOKEN";
