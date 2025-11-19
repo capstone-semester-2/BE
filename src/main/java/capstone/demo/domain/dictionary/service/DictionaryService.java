@@ -26,4 +26,8 @@ public class DictionaryService {
     public Dictionary getById(Long id) {
         return dictionaryRepository.findById(id).orElseThrow(() -> new NotFoundHandler(ErrorStatus.NOT_FOUND_DICTIONARY));
     }
+
+    public List<Dictionary> searchAll(String keyword) {
+        return dictionaryRepository.findAllByKeyword(keyword);
+    }
 }

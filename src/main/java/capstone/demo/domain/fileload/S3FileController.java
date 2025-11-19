@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class FileLoadController {
-    private final FileLoadService fileLoadService;
+public class S3FileController {
+    private final S3FileService s3FileService;
 
     @Value("${amazon.aws.bucket}")
     private String bucketName;
@@ -29,8 +29,7 @@ public class FileLoadController {
         Long userId = GlobalAuthUtil.extractUserId(authDetails);
 
         return ResponseEntity.ok(
-                ApiResponse.onSuccess(fileLoadService.generatePreSignPutUrl(userId, extension, bucketName)));
-
+                ApiResponse.onSuccess(s3FileService.generatePreSignPutUrl(userId, extension, bucketName)));
     }
 
 }

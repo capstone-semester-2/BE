@@ -2,7 +2,9 @@ package capstone.demo.domain.fileload;
 
 import capstone.demo.domain.fileload.dto.PreSignedUrlResponseDto;
 import com.amazonaws.HttpMethod;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +13,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Service
-public class FileLoadService {
+public class S3FileService {
 
     @Autowired
     private AmazonS3 amazonS3;
@@ -44,5 +46,20 @@ public class FileLoadService {
                 .generatePresignedUrl(bucketName, objectKey, calendar.getTime(), HttpMethod.GET)
                 .toString();
     }
+
+    public void deleteObjectFromS3(String objectKey, String bucketName) {
+        try {
+            amazonS3.deleteObject(bucketName, objectKey);
+        } catch (AmazonS3Exception e) {
+            throw new RuntimeException("S3 객체 삭제 중 AmazonS3Exception 발생: " + e.getMessage(), e);
+
+        } catch (SdkClientException e) {
+            throw new RuntimeException("S3와 통신 중 네트워크 오류 발생: " + e.getMessage(), e);
+
+        } catch (Exception e) {
+            throw new RuntimeException("S3 삭제 중 알 수 없는 오류 발생: " + e.getMessage(), e);
+        }
+    }
+
 
 }

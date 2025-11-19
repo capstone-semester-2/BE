@@ -20,11 +20,11 @@ public class Voice extends BaseEntity {
     @Column(name = "user_voice_id")
     private Long id;
 
-    @Column(name = "audio_url", length = 512)
-    private String audioUrl;
+    @Column(name = "object_key", length = 512)
+    private String objectKey;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "translated_text_id")
+    @JoinColumn(name = "translated_text_id", nullable = false)
     private TranslatedText translatedText;
 
     @ManyToOne(fetch = FetchType.LAZY)
