@@ -12,6 +12,7 @@ import capstone.demo.global.apiPayload.code.status.ErrorStatus;
 import capstone.demo.global.apiPayload.exception.GeneralException;
 import capstone.demo.global.apiPayload.exception.handler.NotFoundHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VoiceService {
 
     private final S3FileService s3FileService;
@@ -36,17 +38,20 @@ public class VoiceService {
     public AsyncResponseDTO.AsyncTranslateDTO handleUploadComplete(
             Long userId, FileUploadCompleteDTO.UploadCompleteRequest request) {
 
+            log.info("ai 요청 준비");
+
             CompletableFuture.supplyAsync(() -> {
                         String presignedUrl = s3FileService.generatePreSignGetUrl(request.getObjectKey(), bucketName);
                         return aiClientService.requestVoiceAnalysis(request.getEmitterId(), presignedUrl);
                     }, voiceExecutor)
                     .thenAccept(result -> {
                         emitterService.sendToEmitter(userId, request.getEmitterId(),"complete", result);
-
+                        log.info("sse 결과 출력 성공");
 
                     })
                     .exceptionally(ex -> {
                         emitterService.sendToEmitter(userId, request.getEmitterId(),"error", ex.getMessage());
+                        log.info("sse 결과 출력 error");
                         return null;
                     });
 
