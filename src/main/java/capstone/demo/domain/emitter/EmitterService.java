@@ -6,6 +6,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -27,7 +28,7 @@ public class EmitterService {
         try {
             emitter.send(SseEmitter.event()
                     .name("connected")
-                    .data(emitterId));
+                    .data(Map.of("emitterId", emitterId)));
         } catch (IOException e) {
             emitterRepository.delete(userId, emitterId);
         }
@@ -35,16 +36,20 @@ public class EmitterService {
         return emitter;
     }
 
-    // 특정 emitterId(특정 탭)에게만 이벤트 전송
     public void sendToEmitter(Long userId, String emitterId, String eventName, Object data) {
         SseEmitter emitter = emitterRepository.getEmitter(userId, emitterId);
 
         if (emitter == null) return;
 
         try {
+            Map<String, Object> payload = Map.of(
+                    "event", eventName,
+                    "data", data
+            );
+
             emitter.send(SseEmitter.event()
                     .name(eventName)
-                    .data(data));
+                    .data(payload));
         } catch (IOException e) {
             emitterRepository.delete(userId, emitterId);
         }
