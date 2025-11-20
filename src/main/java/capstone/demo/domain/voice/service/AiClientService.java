@@ -1,27 +1,43 @@
 package capstone.demo.domain.voice.service;
 
+import capstone.demo.domain.voice.dto.AiResultDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Map;
 
 
 @Component
 @RequiredArgsConstructor
 public class AiClientService {
 
-//    private final RestTemplate restTemplate; //webconfig 로 수정.
+    private final WebClient webClient;
 
-    public String requestVoiceAnalysis(String emitterId, String presignedUrl) {
-//        String aiServerUrl = "http://ai-server:8000/api/analyze";
-//
-//        Map<String, Object> body = Map.of("audioUrl", presignedUrl);
-//
-//        ResponseEntity<String> response = restTemplate.postForEntity(
-//                aiServerUrl,
-//                body,
-//                String.class
-//        );
-//
-//        return response.getBody(); // AI 서버에서 반환한 분석 결과
-        return null;
+    @Value("${ai.server.url}")
+    private String ServerUrl;
+
+    @Value("${ai.server.korean-endpoint}")
+    private String koreanEndpoint;
+
+    public AiResultDTO.AiResultResponseDTO requestVoiceAnalysis(String emitterId, String presignedUrl) {
+
+        String aiServerUrl = ServerUrl + koreanEndpoint;
+
+        Map<String, Object> body = Map.of(
+                "audioUrl", presignedUrl,
+                "emitterId", emitterId
+        );
+
+        return webClient.post()
+                .uri(aiServerUrl)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(AiResultDTO.AiResultResponseDTO.class)
+                .block();    // 응답 DTO로 반환
     }
+
+
+
 }

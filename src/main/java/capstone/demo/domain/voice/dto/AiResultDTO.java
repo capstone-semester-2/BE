@@ -12,7 +12,7 @@ public class AiResultDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AiResultRequestDTO {
+    public static class AiResultResponseDTO {
         private String requestId; // uuid
         private String sha256;
         private Integer elapsedMs;
@@ -25,14 +25,14 @@ public class AiResultDTO {
     }
 
 
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class AiResultResponseDTO {
-        private String requestId; // uuid
-        private String text;
-    }
+//    @Builder
+//    @Getter
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    public static class AiResultResponseDTO {
+//        private String requestId; // uuid
+//        private String text;
+//    }
 
 
 }
