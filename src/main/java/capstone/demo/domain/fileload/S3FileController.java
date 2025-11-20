@@ -6,6 +6,7 @@ import capstone.demo.global.security.AuthDetails;
 import capstone.demo.global.util.GlobalAuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class S3FileController {
     private final S3FileService s3FileService;
 
@@ -27,6 +29,8 @@ public class S3FileController {
     public ResponseEntity<ApiResponse<PreSignedUrlResponseDto>> generatePresignedUrl(@AuthenticationPrincipal AuthDetails authDetails, @RequestParam String extension){
 
         Long userId = GlobalAuthUtil.extractUserId(authDetails);
+
+        log.info("pre-signed url 발급");
 
         return ResponseEntity.ok(
                 ApiResponse.onSuccess(s3FileService.generatePreSignPutUrl(userId, extension, bucketName)));
