@@ -42,6 +42,8 @@ public class VoiceService {
                     }, voiceExecutor)
                     .thenAccept(result -> {
                         emitterService.sendToEmitter(userId, request.getEmitterId(),"complete", result);
+
+
                     })
                     .exceptionally(ex -> {
                         emitterService.sendToEmitter(userId, request.getEmitterId(),"error", ex.getMessage());
