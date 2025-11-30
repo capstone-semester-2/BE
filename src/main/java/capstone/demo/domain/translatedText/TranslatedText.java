@@ -28,5 +28,9 @@ public class TranslatedText extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public synchronized void increaseCount() {
+        this.count = this.count + 1;
+    }
 }
 

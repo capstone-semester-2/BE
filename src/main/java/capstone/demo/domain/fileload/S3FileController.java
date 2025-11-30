@@ -36,4 +36,12 @@ public class S3FileController {
                 ApiResponse.onSuccess(s3FileService.generatePreSignPutUrl(userId, extension, bucketName)));
     }
 
+    @GetMapping("/generate-get-presigned-url")
+    @Operation(summary = "조회용 presigned url 발급", description = "조회용 presigned url을 발급합니다.")
+    public ResponseEntity<ApiResponse<PreSignedUrlResponseDto>> generateGetPresignedUrl(@AuthenticationPrincipal AuthDetails authDetails, @RequestParam String objectKey){
+
+        return ResponseEntity.ok(
+                ApiResponse.onSuccess(s3FileService.sendPreSignGetUrl(authDetails.user(), objectKey, bucketName)));
+    }
+
 }

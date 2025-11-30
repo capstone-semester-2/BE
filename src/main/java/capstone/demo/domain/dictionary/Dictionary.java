@@ -21,8 +21,8 @@ public class Dictionary extends BaseEntity {
     @Column(length = 50, name = "gesture_name")
     private String gestureName;
 
-    @Column(length = 512, name = "gesture_url")
-    private String gestureUrl;
+    @Column(length = 512, name = "object_key")
+    private String objectKey;
 
 
 }

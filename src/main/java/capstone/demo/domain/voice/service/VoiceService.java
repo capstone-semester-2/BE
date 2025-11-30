@@ -2,9 +2,12 @@ package capstone.demo.domain.voice.service;
 
 import capstone.demo.domain.emitter.EmitterService;
 import capstone.demo.domain.fileload.S3FileService;
+import capstone.demo.domain.translatedText.TranslatedText;
+import capstone.demo.domain.translatedText.service.TranslatedTextService;
 import capstone.demo.domain.user.entity.User;
 import capstone.demo.domain.voice.Voice;
 import capstone.demo.domain.voice.VoiceRepository;
+import capstone.demo.domain.voice.dto.AiResultDTO;
 import capstone.demo.domain.voice.dto.AsyncResponseDTO;
 import capstone.demo.domain.voice.dto.FileUploadCompleteDTO;
 import capstone.demo.domain.voice.dto.VoiceDTO;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -31,13 +35,14 @@ public class VoiceService {
     private final EmitterService emitterService;
     private final ThreadPoolTaskExecutor voiceExecutor;
     private final VoiceRepository voiceRepository;
+    private final TranslatedTextService translatedTextService;
 
     @Value("${amazon.aws.bucket}")
     private String bucketName;
 
     public AsyncResponseDTO.AsyncTranslateDTO handleUploadComplete(
-            Long userId, FileUploadCompleteDTO.UploadCompleteRequest request) {
-
+            User user, FileUploadCompleteDTO.UploadCompleteRequest request) {
+            Long userId = user.getId();
             log.info("ai 요청 준비");
 
             CompletableFuture.supplyAsync(() -> {
@@ -46,8 +51,8 @@ public class VoiceService {
                     }, voiceExecutor)
                     .thenAccept(result -> {
                         emitterService.sendToEmitter(userId, request.getEmitterId(),"complete", result);
+                        saveVoiceAnalysis(user, request.getObjectKey(), result);
                         log.info("sse 결과 출력 성공");
-
                     })
                     .exceptionally(ex -> {
                         emitterService.sendToEmitter(userId, request.getEmitterId(),"error", ex.getMessage());
@@ -90,9 +95,25 @@ public class VoiceService {
             throw new GeneralException(ErrorStatus._UNAUTHORIZED);
         }
 
-        // S3 파일 삭제
-//         s3FileService.deleteObjectFromS3(voice.getObjectKey(), bucketName);
+         s3FileService.deleteObjectFromS3(voice.getObjectKey(), bucketName);
 
         voiceRepository.delete(voice);
     }
+
+
+    public void saveVoiceAnalysis(User user, String objectKey, AiResultDTO.AiResultResponseDTO dto) {
+
+        Map<String, String> responseText = dto.getResult();
+
+        TranslatedText translatedText = translatedTextService.saveTranslatedText(user, responseText.get("text"));
+
+        Voice voice = Voice.builder()
+                .user(user)
+                .objectKey(objectKey)
+                .translatedText(translatedText)
+                .build();
+
+        voiceRepository.save(voice);
+    }
+
 }

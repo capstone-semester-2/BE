@@ -1,6 +1,7 @@
 package capstone.demo.domain.fileload;
 
 import capstone.demo.domain.fileload.dto.PreSignedUrlResponseDto;
+import capstone.demo.domain.user.entity.User;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -62,4 +63,13 @@ public class S3FileService {
     }
 
 
+    public PreSignedUrlResponseDto sendPreSignGetUrl(User user, String objectKey, String bucketName) {
+        String preSignedUrl = generatePreSignGetUrl(objectKey, bucketName);
+
+        return PreSignedUrlResponseDto.builder()
+                .preSignedUrl(preSignedUrl)
+                .objectKey(objectKey)
+                .expiresAt(Date.from(new Date().toInstant()))
+                .build();
+    }
 }

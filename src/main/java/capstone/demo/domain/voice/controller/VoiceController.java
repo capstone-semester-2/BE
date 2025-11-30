@@ -49,36 +49,10 @@ public class VoiceController {
             @AuthenticationPrincipal AuthDetails authDetails,
             @RequestBody FileUploadCompleteDTO.UploadCompleteRequest request) {
 
-        Long userId = GlobalAuthUtil.extractUserId(authDetails);
-        System.out.println("userId = " + userId);
-
-        log.info("음성 업로드 완료 후 메소드 전");
-
-        AsyncResponseDTO.AsyncTranslateDTO response = voiceService.handleUploadComplete(userId, request);
+        AsyncResponseDTO.AsyncTranslateDTO response = voiceService.handleUploadComplete(authDetails.user(), request);
 
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
-
-//    @PostMapping("/voices/ai-callback")
-//    @Operation(summary = "AI 분석 결과 콜백",
-//            description = "AI 서버에서 분석이 완료되면 이 API로 결과를 전송합니다.")
-//    public ResponseEntity<String> receiveAiResult(
-//            @AuthenticationPrincipal AuthDetails authDetails,
-//            @RequestBody AiResultDTO.AiResultRequestDTO result) {
-//
-//        Long userId = GlobalAuthUtil.extractUserId(authDetails);
-//
-//        Map<String, String> analysisResult = result.getResult();
-//
-//        AiResultDTO.AiResultResponseDTO data = AiResultDTO.AiResultResponseDTO.builder()
-//                        .requestId(result.getRequestId())
-//                        .text(analysisResult.get("text"))
-//                        .build();
-//
-//        emitterService.sendToEmitter(userId, result.getRequestId(), "complete", data);
-//
-//        return ResponseEntity.ok("SSE 전송 완료 for user " + userId);
-//    }
 
 
     @GetMapping("/voices")
