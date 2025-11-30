@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,16 +20,16 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    @PostMapping("/bookmark")
-    @Operation(summary = "북마크 저장하기",
-            description = "백과사전에서 원하는 항목을 북마크하는 API입니다.")
-    public ResponseEntity<ApiResponse<BookmarkResponse>> addBookmark(
+    @PutMapping("/bookmark")
+    @Operation(summary = "북마크 토글", description = "북마크 상태를 토글합니다.")
+    public ResponseEntity<ApiResponse<BookmarkResponse>> toggleBookmark(
             @AuthenticationPrincipal AuthDetails authDetails,
             @RequestParam Long dictionaryId
     ) {
-        BookmarkResponse resp = bookmarkService.addBookmark(authDetails.user() , dictionaryId);
+        BookmarkResponse resp = bookmarkService.toggleBookmark(authDetails.user(), dictionaryId);
         return ResponseEntity.ok(ApiResponse.onSuccess(resp));
     }
+
 
     @GetMapping("/bookmark/list")
     @Operation(summary = "북마크 리스트 조회하기",

@@ -1,8 +1,11 @@
 package capstone.demo.domain.dictionary.service;
 
+import capstone.demo.domain.bookmark.service.BookmarkService;
 import capstone.demo.domain.dictionary.Dictionary;
+import capstone.demo.domain.dictionary.dto.DictionaryResponse;
 import capstone.demo.domain.dictionary.repository.DictionaryRepository;
 import capstone.demo.domain.fileload.S3FileService;
+import capstone.demo.domain.user.entity.User;
 import capstone.demo.global.apiPayload.code.status.ErrorStatus;
 import capstone.demo.global.apiPayload.exception.handler.NotFoundHandler;
 import com.amazonaws.services.kms.model.NotFoundException;
@@ -11,19 +14,47 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class DictionaryService {
-    private final S3FileService s3FileService;
+//    private final S3FileService s3FileService;
     private final DictionaryRepository dictionaryRepository;
+    private final BookmarkService bookmarkService;
 
-    public List<Dictionary> getFirstPage(int size) {
-        return dictionaryRepository.getFirstPage(size);
+    public List<DictionaryResponse> getFirstPage(User user, int size) {
+        Set<Long> bookmarkedIds = bookmarkService.getBookmarkDictionaryIds(user);
+
+        List<Dictionary> dictionaries = dictionaryRepository.getFirstPage(size);
+
+        return dictionaries.stream()
+                .map(d -> DictionaryResponse.builder()
+                        .id(d.getId())
+                        .gestureName(d.getGestureName())
+                        .objectKey(d.getObjectKey())
+                        .isbookmarked(bookmarkedIds.contains(d.getId()))
+                        .build())
+                .toList();
+
+
     }
 
-    public List<Dictionary> getNextPage(Long lastId, int size) {
-        return dictionaryRepository.getNextPage(lastId, size);
+    public List<DictionaryResponse> getNextPage(User user, Long lastId, int size) {
+        Set<Long> bookmarkedIds = bookmarkService.getBookmarkDictionaryIds(user);
+
+        List<Dictionary> dictionaries = dictionaryRepository.getNextPage(lastId, size);
+
+        return dictionaries.stream()
+                .map(d -> DictionaryResponse.builder()
+                        .id(d.getId())
+                        .gestureName(d.getGestureName())
+                        .objectKey(d.getObjectKey())
+                        .isbookmarked(bookmarkedIds.contains(d.getId()))
+                        .build())
+                .toList();
+
     }
 
     public Dictionary getById(Long id) {
@@ -33,6 +64,7 @@ public class DictionaryService {
     public List<Dictionary> searchAll(String keyword) {
         return dictionaryRepository.findAllByKeyword(keyword);
     }
+
 
 //    public void updateObjectKeysFromS3(String bucketName) {
 //

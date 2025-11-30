@@ -10,5 +10,6 @@ import lombok.*;
 public class DictionaryResponse {
     private Long id;
     private String gestureName;
-    private String gestureUrl;
+    private String objectKey;
+    private boolean isbookmarked;
 }

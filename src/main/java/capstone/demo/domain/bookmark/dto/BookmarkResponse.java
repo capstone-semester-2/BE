@@ -10,6 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookmarkResponse {
-    private Long bookMarkId;
-    private String message;
+    private Long dictionaryId;
+    private boolean bookmarked;
+
+    public static BookmarkResponse of(Long id, boolean bookmarked) {
+        return BookmarkResponse.builder()
+                .dictionaryId(id)
+                .bookmarked(bookmarked)
+                .build();
+    }
 }

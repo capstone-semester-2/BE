@@ -4,9 +4,11 @@ import capstone.demo.domain.dictionary.Dictionary;
 import capstone.demo.domain.dictionary.dto.DictionaryResponse;
 import capstone.demo.domain.dictionary.service.DictionaryService;
 import capstone.demo.global.apiPayload.ApiResponse;
+import capstone.demo.global.security.AuthDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,16 +25,17 @@ public class DictionaryController {
     @GetMapping("/dictionary/list")
     @Operation(summary = "수화 사전 무한 스크롤 리스트 조회",
             description = "lastId 기반으로 무한 스크롤 형식으로 조회합니다.")
-    public ResponseEntity<ApiResponse<List<Dictionary>>> getDictionaryList(
+    public ResponseEntity<ApiResponse<List<DictionaryResponse>>> getDictionaryList(
+            @AuthenticationPrincipal AuthDetails authDetails,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = "20") int size
     ) {
-        List<Dictionary> result;
+        List<DictionaryResponse> result;
 
         if (lastId == null) {
-            result = dictionaryService.getFirstPage(size);
+            result = dictionaryService.getFirstPage(authDetails.user(), size);
         } else {
-            result = dictionaryService.getNextPage(lastId, size);
+            result = dictionaryService.getNextPage(authDetails.user(), lastId, size);
         }
 
         return ResponseEntity.ok(ApiResponse.onSuccess(result));
@@ -51,7 +54,7 @@ public class DictionaryController {
     }
 
 //    @PostMapping("/sync-s3")
-//    public String syncObjectKeys(@RequestParam String bucketName) {
+//    public String syncObjectKeys(@RequestPara m String bucketName) {
 //        dictionaryService.updateObjectKeysFromS3(bucketName);
 //        return "OK - S3 keys synced to dictionary DB";
 //    }
