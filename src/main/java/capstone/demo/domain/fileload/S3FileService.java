@@ -2,6 +2,7 @@ package capstone.demo.domain.fileload;
 
 import capstone.demo.domain.fileload.dto.PreSignedUrlResponseDto;
 import capstone.demo.domain.user.entity.User;
+import capstone.demo.domain.voice.entity.VoiceModel;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
@@ -16,10 +17,9 @@ import java.util.*;
 
 @Service
 public class S3FileService {
-
+    static final int fileCount = 20;
     @Autowired
     private AmazonS3 amazonS3;
-
     public PreSignedUrlResponseDto generatePreSignPutUrl(Long userId,
                                                       String extension,
                                                       String bucketName){
@@ -73,6 +73,63 @@ public class S3FileService {
                 .expiresAt(Date.from(new Date().toInstant()))
                 .build();
     }
+
+    public List<PreSignedUrlResponseDto> generateMultiplePreSignPutUrls(
+            User user,
+            String bucketName,
+            VoiceModel voiceModel
+    ) {
+
+        List<PreSignedUrlResponseDto> result = new ArrayList<>();
+
+        for (int i = 0; i < fileCount; i++) {
+            String objectKey =  voiceModel.toString().toLowerCase() + "/training-voice/" + user.getId() + "/" + UUID.randomUUID() + ".wav";
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.MINUTE, 10);
+
+            String preSignedUrl = amazonS3.generatePresignedUrl(
+                    bucketName,
+                    objectKey,
+                    calendar.getTime(),
+                    HttpMethod.PUT
+            ).toString();
+
+            result.add(
+                    PreSignedUrlResponseDto.of(
+                            preSignedUrl,
+                            objectKey,
+                            calendar.getTime()
+                    )
+            );
+        }
+
+        return result;
+    }
+
+    public List<String> generatePreSignGetUrls(List<String> objectKeys, String bucketName) {
+        List<String> preSignedGeturls = new ArrayList<>();
+
+        for (String objectKey : objectKeys) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.MINUTE, 10); // presigned URL 유효기간 10분
+
+            String preSignedUrl = amazonS3.generatePresignedUrl(
+                    bucketName,
+                    objectKey,
+                    calendar.getTime(),
+                    HttpMethod.GET
+            ).toString();
+
+            preSignedGeturls.add(preSignedUrl);
+        }
+
+        return preSignedGeturls;
+    }
+
+
 
 //    public List<String> listObjectKeys(String prefix, String bucketName) {
 //        ListObjectsV2Request req = new ListObjectsV2Request()

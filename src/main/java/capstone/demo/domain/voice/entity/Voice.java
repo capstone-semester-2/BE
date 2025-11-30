@@ -1,4 +1,4 @@
-package capstone.demo.domain.voice;
+package capstone.demo.domain.voice.entity;
 
 import capstone.demo.domain.translatedText.TranslatedText;
 import capstone.demo.domain.user.entity.User;

@@ -25,14 +25,14 @@ public class AiResultDTO {
     }
 
 
-//    @Builder
-//    @Getter
-//    @NoArgsConstructor
-//    @AllArgsConstructor
-//    public static class AiResultResponseDTO {
-//        private String requestId; // uuid
-//        private String text;
-//    }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AiLearningResultResponseDTO {
+        private String requestId; // uuid
+        private Long adapterId;
+    }
 
 
 }

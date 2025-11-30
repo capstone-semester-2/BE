@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 public class FileUploadCompleteDTO {
 
@@ -16,6 +17,15 @@ public class FileUploadCompleteDTO {
     public static class UploadCompleteRequest {
         private String emitterId;
         private String objectKey;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class UploadCompleteAndLearningRequest {
+        private String emitterId;
+        private List<String> objectKeys;
     }
 
     @Builder

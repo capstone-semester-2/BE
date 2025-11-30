@@ -40,6 +40,8 @@ public class User extends BaseEntity {
     @Column(name = "login_type")
     private LoginType loginType;
 
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Bookmark> bookmarks = new ArrayList<>();
+
 }

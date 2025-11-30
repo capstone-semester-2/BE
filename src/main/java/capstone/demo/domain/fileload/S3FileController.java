@@ -1,6 +1,7 @@
 package capstone.demo.domain.fileload;
 
 import capstone.demo.domain.fileload.dto.PreSignedUrlResponseDto;
+import capstone.demo.domain.voice.entity.VoiceModel;
 import capstone.demo.global.apiPayload.ApiResponse;
 import capstone.demo.global.security.AuthDetails;
 import capstone.demo.global.util.GlobalAuthUtil;
@@ -11,8 +12,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -43,5 +48,15 @@ public class S3FileController {
         return ResponseEntity.ok(
                 ApiResponse.onSuccess(s3FileService.sendPreSignGetUrl(authDetails.user(), objectKey, bucketName)));
     }
+
+    @PostMapping("/presigned/put/multiple")
+    @Operation(summary = "AI 학습용 데이터 관련 presigned url 발급", description = "AI 학습용 데이터 관련 presigned url을 발급합니다.")
+    public List<PreSignedUrlResponseDto> createMultiplePresignedPutUrls(
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @RequestParam VoiceModel voiceModel
+            ) {
+        return s3FileService.generateMultiplePreSignPutUrls(authDetails.user(), bucketName, voiceModel);
+    }
+
 
 }

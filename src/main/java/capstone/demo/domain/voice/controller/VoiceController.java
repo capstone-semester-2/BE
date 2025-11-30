@@ -1,15 +1,14 @@
 package capstone.demo.domain.voice.controller;
 
 import capstone.demo.domain.emitter.EmitterService;
-import capstone.demo.domain.voice.dto.AiResultDTO;
 import capstone.demo.domain.voice.dto.AsyncResponseDTO;
 import capstone.demo.domain.voice.dto.FileUploadCompleteDTO;
 import capstone.demo.domain.voice.dto.VoiceDTO;
+import capstone.demo.domain.voice.entity.VoiceModel;
 import capstone.demo.domain.voice.service.VoiceService;
 import capstone.demo.global.apiPayload.ApiResponse;
 import capstone.demo.global.security.AuthDetails;
 import capstone.demo.global.security.jwt.TokenProvider;
-import capstone.demo.global.util.GlobalAuthUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,16 +40,29 @@ public class VoiceController {
 
     @PostMapping("/voices/upload-complete")
     @Operation(summary = "음성 업로드 완료",
-            description = "S3 업로드 완료 후 objectKey와 uuid(emitterId)를 전달받아, DB 저장 및 AI 서버 분석 요청을 수행합니다.")
-    public ResponseEntity<ApiResponse<AsyncResponseDTO.AsyncTranslateDTO>> uploadComplete(
+            description = "S3 업로드 완료 후 objectKey, uuid(emitterId), 모델을 종류를 전달받아, DB 저장 및 AI 서버 분석 요청을 수행합니다.")
+    public ResponseEntity<ApiResponse<AsyncResponseDTO.AsyncTranslateDTO>> uploadCompleteAndAnalyze(
             @AuthenticationPrincipal AuthDetails authDetails,
-            @RequestBody FileUploadCompleteDTO.UploadCompleteRequest request) {
+            @RequestBody FileUploadCompleteDTO.UploadCompleteRequest request,
+            @RequestParam VoiceModel voiceModel) {
 
-        AsyncResponseDTO.AsyncTranslateDTO response = voiceService.handleUploadComplete(authDetails.user(), request);
+        AsyncResponseDTO.AsyncTranslateDTO response = voiceService.uploadCompleteAndAnalyze(authDetails.user(), request, voiceModel);
 
         return ResponseEntity.ok(ApiResponse.onSuccess(response));
     }
 
+    @PostMapping("/voices/ai-learning")
+    @Operation(summary = "음성 학습 API",
+            description = "S3 업로드 완료 후 objectKeys, 모델을 종류를 전달받아, DB 저장 및 AI 모델 학습을 요청합니다.")
+    public ResponseEntity<ApiResponse<AsyncResponseDTO.AsyncTranslateDTO>> uploadCompleteAndLearning(
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @RequestBody FileUploadCompleteDTO.UploadCompleteAndLearningRequest request,
+            @RequestParam VoiceModel voiceModel) {
+
+        AsyncResponseDTO.AsyncTranslateDTO response = voiceService.handleUploadCompleteAndLearning(authDetails.user(), request, voiceModel);
+
+        return ResponseEntity.ok(ApiResponse.onSuccess(response));
+    }
 
     @GetMapping("/voices")
     @Operation(summary = "음성 기록 무한 스크롤 조회",

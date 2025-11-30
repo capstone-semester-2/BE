@@ -1,6 +1,6 @@
 package capstone.demo.domain.voice.dto;
 
-import capstone.demo.domain.voice.Voice;
+import capstone.demo.domain.voice.entity.Voice;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
