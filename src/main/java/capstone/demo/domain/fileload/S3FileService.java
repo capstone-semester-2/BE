@@ -6,12 +6,13 @@ import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.services.s3.model.ListObjectsV2Request;
+import com.amazonaws.services.s3.model.ListObjectsV2Result;
+import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class S3FileService {
@@ -72,4 +73,19 @@ public class S3FileService {
                 .expiresAt(Date.from(new Date().toInstant()))
                 .build();
     }
+
+//    public List<String> listObjectKeys(String prefix, String bucketName) {
+//        ListObjectsV2Request req = new ListObjectsV2Request()
+//                .withBucketName(bucketName)
+//                .withPrefix(prefix);
+//
+//        ListObjectsV2Result result = amazonS3.listObjectsV2(req);
+//
+//        List<String> keys = new ArrayList<>();
+//        for (S3ObjectSummary obj : result.getObjectSummaries()) {
+//            keys.add(obj.getKey());
+//        }
+//
+//        return keys;
+//    }
 }

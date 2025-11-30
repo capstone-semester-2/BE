@@ -24,7 +24,7 @@ public class S3FileController {
     @Value("${amazon.aws.bucket}")
     private String bucketName;
 
-    @GetMapping("/generate-presigned-url")
+    @GetMapping("/generate-put-presigned-url")
     @Operation(summary = "음성 업로드용 presigned url 발급", description = "음성 업로드용 presigned url을 발급합니다.")
     public ResponseEntity<ApiResponse<PreSignedUrlResponseDto>> generatePresignedUrl(@AuthenticationPrincipal AuthDetails authDetails, @RequestParam String extension){
 

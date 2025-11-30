@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,4 +50,9 @@ public class DictionaryController {
         return ResponseEntity.ok(ApiResponse.onSuccess(result));
     }
 
+//    @PostMapping("/sync-s3")
+//    public String syncObjectKeys(@RequestParam String bucketName) {
+//        dictionaryService.updateObjectKeysFromS3(bucketName);
+//        return "OK - S3 keys synced to dictionary DB";
+//    }
 }
