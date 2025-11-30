@@ -1,5 +1,7 @@
 package capstone.demo.domain.voice.service;
 
+import capstone.demo.domain.dictionary.Dictionary;
+import capstone.demo.domain.dictionary.service.DictionaryService;
 import capstone.demo.domain.emitter.EmitterService;
 import capstone.demo.domain.fileload.S3FileService;
 import capstone.demo.domain.translatedText.TranslatedText;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +39,7 @@ public class VoiceService {
     private final ThreadPoolTaskExecutor voiceExecutor;
     private final VoiceRepository voiceRepository;
     private final TranslatedTextService translatedTextService;
+    private final DictionaryService dictionaryService;
 
     @Value("${amazon.aws.bucket}")
     private String bucketName;
@@ -75,11 +79,26 @@ public class VoiceService {
 
         int totalCount = voiceRepository.countByUserId(userId);
 
+        List<String> contents = voices.stream()
+                .map(v -> v.getTranslatedText().getContent())
+                .toList();
+
+        List<Dictionary> dictionaries = dictionaryService.findAllByGestureNameIn(contents);
+
+        Map<String, String> dictMap = dictionaries.stream()
+                .collect(Collectors.toMap(
+                        Dictionary::getGestureName,
+                        Dictionary::getObjectKey
+                ));
+
         return VoiceDTO.VoiceListResponseDTO.builder()
                 .totalCount(totalCount)
                 .voices(
                         voices.stream()
-                                .map(VoiceDTO.VoiceDetailDTO::from)
+                                .map(voice -> VoiceDTO.VoiceDetailDTO.from(
+                                        voice,
+                                        dictMap.get(voice.getTranslatedText().getContent()) // 매칭된 objectKey
+                                ))
                                 .toList()
                 )
                 .build();

@@ -65,6 +65,10 @@ public class DictionaryService {
         return dictionaryRepository.findAllByKeyword(keyword);
     }
 
+    public List<Dictionary> findAllByGestureNameIn(List<String> contents) {
+        return dictionaryRepository.findAllByGestureNameIn(contents);
+    }
+
 
 //    public void updateObjectKeysFromS3(String bucketName) {
 //

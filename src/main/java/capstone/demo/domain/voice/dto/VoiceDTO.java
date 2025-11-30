@@ -28,13 +28,15 @@ public class VoiceDTO {
         private Long voiceId;
         private String objectKey;
         private String translatedText;
+        private String translatedText_objectKey;
         private LocalDateTime createdAt;
 
-        public static VoiceDetailDTO from(Voice voice) {
+        public static VoiceDetailDTO from(Voice voice, String objectKey) {
             return VoiceDetailDTO.builder()
                     .voiceId(voice.getId())
                     .objectKey(voice.getObjectKey())
                     .translatedText(voice.getTranslatedText().getContent())
+                    .translatedText_objectKey(objectKey)
                     .createdAt(voice.getCreatedAt())
                     .build();
         }
