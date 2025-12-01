@@ -1,5 +1,6 @@
 package capstone.demo.domain.dictionary.controller;
 
+import capstone.demo.domain.dictionary.dto.DictionaryBookmarkResponse;
 import capstone.demo.domain.dictionary.Dictionary;
 import capstone.demo.domain.dictionary.dto.DictionaryResponse;
 import capstone.demo.domain.dictionary.service.DictionaryService;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +22,16 @@ import java.util.List;
 public class DictionaryController {
 
     private final DictionaryService dictionaryService;
+
+    @PutMapping("/dictionary/bookmark")
+    @Operation(summary = "북마크 토글", description = "북마크 상태를 토글합니다.")
+    public ResponseEntity<ApiResponse<DictionaryBookmarkResponse>> toggleBookmark(
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @RequestParam Long dictionaryId
+    ) {
+        DictionaryBookmarkResponse resp = dictionaryService.toggleBookmark(authDetails.user(), dictionaryId);
+        return ResponseEntity.ok(ApiResponse.onSuccess(resp));
+    }
 
     @GetMapping("/dictionary/list")
     @Operation(summary = "수화 사전 무한 스크롤 리스트 조회",

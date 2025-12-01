@@ -1,21 +1,20 @@
 package capstone.demo.domain.dictionary.service;
 
+import capstone.demo.domain.bookmark.Bookmark;
+import capstone.demo.domain.dictionary.dto.DictionaryBookmarkResponse;
 import capstone.demo.domain.bookmark.service.BookmarkService;
 import capstone.demo.domain.dictionary.Dictionary;
 import capstone.demo.domain.dictionary.dto.DictionaryResponse;
 import capstone.demo.domain.dictionary.repository.DictionaryRepository;
-import capstone.demo.domain.fileload.S3FileService;
 import capstone.demo.domain.user.entity.User;
 import capstone.demo.global.apiPayload.code.status.ErrorStatus;
 import capstone.demo.global.apiPayload.exception.handler.NotFoundHandler;
-import com.amazonaws.services.kms.model.NotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -67,6 +66,29 @@ public class DictionaryService {
 
     public List<Dictionary> findAllByGestureNameIn(List<String> contents) {
         return dictionaryRepository.findAllByGestureNameIn(contents);
+    }
+
+    public DictionaryBookmarkResponse toggleBookmark(User user, Long dictionaryId) {
+
+        Optional<Bookmark> existing =
+                bookmarkService.findByUserAndDictionaryId(user, dictionaryId);
+
+        // 이미 있으면 삭제 → "북마크 해제됨" 반환
+        if (existing.isPresent()) {
+            bookmarkService.delete(existing.get());
+            return DictionaryBookmarkResponse.of(dictionaryId, false);
+        }
+
+        Dictionary dictionary = getById(dictionaryId);
+
+        Bookmark bookmark = Bookmark.builder()
+                .user(user)
+                .dictionary(dictionary)
+                .build();
+
+        bookmarkService.save(bookmark);
+
+        return DictionaryBookmarkResponse.of(dictionaryId, true); // bookmarked = true
     }
 
 

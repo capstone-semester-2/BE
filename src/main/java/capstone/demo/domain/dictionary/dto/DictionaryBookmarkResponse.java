@@ -1,4 +1,4 @@
-package capstone.demo.domain.bookmark.dto;
+package capstone.demo.domain.dictionary.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookmarkResponse {
+public class DictionaryBookmarkResponse {
     private Long dictionaryId;
     private boolean bookmarked;
 
-    public static BookmarkResponse of(Long id, boolean bookmarked) {
-        return BookmarkResponse.builder()
+    public static DictionaryBookmarkResponse of(Long id, boolean bookmarked) {
+        return DictionaryBookmarkResponse.builder()
                 .dictionaryId(id)
                 .bookmarked(bookmarked)
                 .build();
