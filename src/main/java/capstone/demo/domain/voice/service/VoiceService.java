@@ -6,15 +6,16 @@ import capstone.demo.domain.dictionary.Dictionary;
 import capstone.demo.domain.dictionary.service.DictionaryService;
 import capstone.demo.domain.emitter.EmitterService;
 import capstone.demo.domain.fileload.S3FileService;
+import capstone.demo.domain.fileload.dto.PreSignedUrlInfo;
+import capstone.demo.domain.fileload.dto.PreSignedUrlResponseDto;
 import capstone.demo.domain.translatedText.TranslatedText;
 import capstone.demo.domain.translatedText.service.TranslatedTextService;
 import capstone.demo.domain.user.entity.User;
-import capstone.demo.domain.user.service.UserService;
 import capstone.demo.domain.voice.entity.Voice;
 import capstone.demo.domain.voice.VoiceRepository;
 import capstone.demo.domain.voice.dto.AiResultDTO;
 import capstone.demo.domain.voice.dto.AsyncResponseDTO;
-import capstone.demo.domain.voice.dto.FileUploadCompleteDTO;
+import capstone.demo.domain.fileload.dto.FileUploadCompleteDTO;
 import capstone.demo.domain.voice.dto.VoiceDTO;
 import capstone.demo.domain.voice.entity.VoiceModel;
 import capstone.demo.global.apiPayload.code.status.ErrorStatus;
@@ -148,7 +149,7 @@ public class VoiceService {
     public AsyncResponseDTO.AsyncTranslateDTO handleUploadCompleteAndLearning(User user, FileUploadCompleteDTO.UploadCompleteAndLearningRequest request, VoiceModel voiceModel) {
 
         CompletableFuture.supplyAsync(() -> {
-                    List<String> presignedUrls = s3FileService.generatePreSignGetUrls(request.getObjectKeys(), bucketName);
+                    List<PreSignedUrlInfo> presignedUrls = s3FileService.generatePreSignGetUrls(request.getObjectKeyInfos(), bucketName);
                     return aiClientService.requestVoiceLearning(request.getEmitterId(), presignedUrls, voiceModel);
                 }, voiceExecutor)
                 .thenAccept(result -> {

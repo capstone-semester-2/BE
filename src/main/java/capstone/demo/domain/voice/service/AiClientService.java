@@ -1,5 +1,6 @@
 package capstone.demo.domain.voice.service;
 
+import capstone.demo.domain.fileload.dto.PreSignedUrlInfo;
 import capstone.demo.domain.voice.dto.AiResultDTO;
 import capstone.demo.domain.voice.entity.VoiceModel;
 import lombok.RequiredArgsConstructor;
@@ -42,11 +43,12 @@ public class AiClientService {
     }
 
 
-    public AiResultDTO.AiLearningResultResponseDTO requestVoiceLearning(String emitterId, List<String> presignedUrls, VoiceModel voiceModel) {
-        String aiServerUrl = ServerUrl + "adapter/train/" + voiceModel.toString().toLowerCase();
+    public AiResultDTO.AiLearningResultResponseDTO requestVoiceLearning(String emitterId, List<PreSignedUrlInfo> presignedUrls, VoiceModel voiceModel) {
+        String aiServerUrl = ServerUrl + "adapter-train";
 
         Map<String, Object> body = Map.of(
-                "audioUrls", presignedUrls,
+                "engine", voiceModel.toString().toLowerCase(),
+                "pairs", presignedUrls,
                 "emitterId", emitterId
         );
         log.info("ai 학습 요청 보낸 후");
