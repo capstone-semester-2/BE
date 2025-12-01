@@ -2,11 +2,13 @@ package capstone.demo.domain.bookmark.repository;
 
 import capstone.demo.domain.bookmark.Bookmark;
 import capstone.demo.domain.dictionary.Dictionary;
+import capstone.demo.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
@@ -34,4 +36,8 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     """,
             nativeQuery = true)
     List<Dictionary> getNextPage(Long userId, Long lastId, int size);
+
+    Optional<Bookmark> findAllByUser(User user);
+
+    Optional<Bookmark> findByUserAndDictionaryId(User user, Long dictionaryId);
 }

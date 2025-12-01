@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface TranslatedTextRepository extends CrudRepository<TranslatedText, Long> {
 
     List<TranslatedText> findTop3ByUserOrderByCountDesc(User user);
+
+    Optional<TranslatedText> findByUserAndContent(User user, String content);
 }

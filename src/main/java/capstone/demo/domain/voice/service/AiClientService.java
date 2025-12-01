@@ -1,12 +1,14 @@
 package capstone.demo.domain.voice.service;
 
 import capstone.demo.domain.voice.dto.AiResultDTO;
+import capstone.demo.domain.voice.entity.VoiceModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -20,18 +22,16 @@ public class AiClientService {
     @Value("${ai.server.url}")
     private String ServerUrl;
 
-    @Value("${ai.server.korean-endpoint}")
-    private String koreanEndpoint;
+    public AiResultDTO.AiResultResponseDTO requestVoiceAnalysis(String emitterId, String presignedUrl, VoiceModel voiceModel, Long adapterNumberToUse) {
 
-    public AiResultDTO.AiResultResponseDTO requestVoiceAnalysis(String emitterId, String presignedUrl) {
-
-        String aiServerUrl = ServerUrl + koreanEndpoint;
+        String aiServerUrl = ServerUrl + voiceModel.toString().toLowerCase();
 
         Map<String, Object> body = Map.of(
                 "audioUrl", presignedUrl,
-                "emitterId", emitterId
+                "emitterId", emitterId,
+                "adapterNumber", adapterNumberToUse
         );
-        log.info("ai 요청 보낸 후");
+        log.info("ai 서버 요청 보낸 후");
 
         return webClient.post()
                 .uri(aiServerUrl)
@@ -42,5 +42,20 @@ public class AiClientService {
     }
 
 
+    public AiResultDTO.AiLearningResultResponseDTO requestVoiceLearning(String emitterId, List<String> presignedUrls, VoiceModel voiceModel) {
+        String aiServerUrl = ServerUrl + "adapter/train/" + voiceModel.toString().toLowerCase();
 
+        Map<String, Object> body = Map.of(
+                "audioUrls", presignedUrls,
+                "emitterId", emitterId
+        );
+        log.info("ai 학습 요청 보낸 후");
+
+        return webClient.post()
+                .uri(aiServerUrl)
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(AiResultDTO.AiLearningResultResponseDTO.class)
+                .block();    // 응답 DTO로 반환
+    }
 }

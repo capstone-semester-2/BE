@@ -33,4 +33,6 @@ public interface DictionaryRepository extends JpaRepository<Dictionary, Long> {
             "ORDER BY dictionary_id DESC",
             nativeQuery = true)
     List<Dictionary> findAllByKeyword(String keyword);
+
+    List<Dictionary> findAllByGestureNameIn(List<String> gestureNames);
 }

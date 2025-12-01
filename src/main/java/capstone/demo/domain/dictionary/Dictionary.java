@@ -2,14 +2,12 @@ package capstone.demo.domain.dictionary;
 
 import capstone.demo.global.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @Builder
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Dictionary extends BaseEntity {
@@ -21,8 +19,8 @@ public class Dictionary extends BaseEntity {
     @Column(length = 50, name = "gesture_name")
     private String gestureName;
 
-    @Column(length = 512, name = "gesture_url")
-    private String gestureUrl;
+    @Column(length = 512, name = "object_key")
+    private String objectKey;
 
 
 }

@@ -1,13 +1,17 @@
 package capstone.demo.domain.dictionary.controller;
 
+import capstone.demo.domain.dictionary.dto.DictionaryBookmarkResponse;
 import capstone.demo.domain.dictionary.Dictionary;
 import capstone.demo.domain.dictionary.dto.DictionaryResponse;
 import capstone.demo.domain.dictionary.service.DictionaryService;
 import capstone.demo.global.apiPayload.ApiResponse;
+import capstone.demo.global.security.AuthDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,19 +23,30 @@ public class DictionaryController {
 
     private final DictionaryService dictionaryService;
 
+    @PutMapping("/dictionary/bookmark")
+    @Operation(summary = "북마크 토글", description = "북마크 상태를 토글합니다.")
+    public ResponseEntity<ApiResponse<DictionaryBookmarkResponse>> toggleBookmark(
+            @AuthenticationPrincipal AuthDetails authDetails,
+            @RequestParam Long dictionaryId
+    ) {
+        DictionaryBookmarkResponse resp = dictionaryService.toggleBookmark(authDetails.user(), dictionaryId);
+        return ResponseEntity.ok(ApiResponse.onSuccess(resp));
+    }
+
     @GetMapping("/dictionary/list")
     @Operation(summary = "수화 사전 무한 스크롤 리스트 조회",
             description = "lastId 기반으로 무한 스크롤 형식으로 조회합니다.")
-    public ResponseEntity<ApiResponse<List<Dictionary>>> getDictionaryList(
+    public ResponseEntity<ApiResponse<List<DictionaryResponse>>> getDictionaryList(
+            @AuthenticationPrincipal AuthDetails authDetails,
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = "20") int size
     ) {
-        List<Dictionary> result;
+        List<DictionaryResponse> result;
 
         if (lastId == null) {
-            result = dictionaryService.getFirstPage(size);
+            result = dictionaryService.getFirstPage(authDetails.user(), size);
         } else {
-            result = dictionaryService.getNextPage(lastId, size);
+            result = dictionaryService.getNextPage(authDetails.user(), lastId, size);
         }
 
         return ResponseEntity.ok(ApiResponse.onSuccess(result));
@@ -49,4 +64,9 @@ public class DictionaryController {
         return ResponseEntity.ok(ApiResponse.onSuccess(result));
     }
 
+//    @PostMapping("/sync-s3")
+//    public String syncObjectKeys(@RequestPara m String bucketName) {
+//        dictionaryService.updateObjectKeysFromS3(bucketName);
+//        return "OK - S3 keys synced to dictionary DB";
+//    }
 }
