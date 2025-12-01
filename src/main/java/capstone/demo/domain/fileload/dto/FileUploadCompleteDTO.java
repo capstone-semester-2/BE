@@ -1,4 +1,4 @@
-package capstone.demo.domain.voice.dto;
+package capstone.demo.domain.fileload.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +25,7 @@ public class FileUploadCompleteDTO {
     @AllArgsConstructor
     public static class UploadCompleteAndLearningRequest {
         private String emitterId;
-        private List<String> objectKeys;
+        private List<ObjectKeyInfo> objectKeyInfos;
     }
 
     @Builder
@@ -45,5 +45,7 @@ public class FileUploadCompleteDTO {
                     .build();
         }
     }
+
+
 
 }

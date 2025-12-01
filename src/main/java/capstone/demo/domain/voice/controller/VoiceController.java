@@ -2,7 +2,7 @@ package capstone.demo.domain.voice.controller;
 
 import capstone.demo.domain.emitter.EmitterService;
 import capstone.demo.domain.voice.dto.AsyncResponseDTO;
-import capstone.demo.domain.voice.dto.FileUploadCompleteDTO;
+import capstone.demo.domain.fileload.dto.FileUploadCompleteDTO;
 import capstone.demo.domain.voice.dto.VoiceDTO;
 import capstone.demo.domain.voice.entity.VoiceModel;
 import capstone.demo.domain.voice.service.VoiceService;

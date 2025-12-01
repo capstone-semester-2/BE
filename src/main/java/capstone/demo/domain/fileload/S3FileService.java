@@ -1,15 +1,15 @@
 package capstone.demo.domain.fileload;
 
+import capstone.demo.domain.fileload.dto.ObjectKeyInfo;
+import capstone.demo.domain.fileload.dto.PreSignedUrlInfo;
 import capstone.demo.domain.fileload.dto.PreSignedUrlResponseDto;
 import capstone.demo.domain.user.entity.User;
+import capstone.demo.domain.fileload.dto.FileUploadCompleteDTO;
 import capstone.demo.domain.voice.entity.VoiceModel;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.AmazonS3Exception;
-import com.amazonaws.services.s3.model.ListObjectsV2Request;
-import com.amazonaws.services.s3.model.ListObjectsV2Result;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -108,10 +108,13 @@ public class S3FileService {
         return result;
     }
 
-    public List<String> generatePreSignGetUrls(List<String> objectKeys, String bucketName) {
-        List<String> preSignedGeturls = new ArrayList<>();
+    public List<PreSignedUrlInfo> generatePreSignGetUrls(List<ObjectKeyInfo> objectKeyInfos, String bucketName) {
+        List<PreSignedUrlInfo> preSignedGetUrls = new ArrayList<>();
 
-        for (String objectKey : objectKeys) {
+        for (ObjectKeyInfo info : objectKeyInfos) {
+            Integer objectKeyId = info.getObjectKeyId();
+            String objectKey = info.getObjectKey();
+
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             calendar.add(Calendar.MINUTE, 10); // presigned URL 유효기간 10분
@@ -123,10 +126,15 @@ public class S3FileService {
                     HttpMethod.GET
             ).toString();
 
-            preSignedGeturls.add(preSignedUrl);
+            PreSignedUrlInfo preSignedUrlInfo = PreSignedUrlInfo.builder()
+                    .audioId(objectKeyId)
+                    .audioUrl(preSignedUrl)
+                    .build();
+
+            preSignedGetUrls.add(preSignedUrlInfo);
         }
 
-        return preSignedGeturls;
+        return preSignedGetUrls;
     }
 
 
