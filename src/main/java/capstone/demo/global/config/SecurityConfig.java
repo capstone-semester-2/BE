@@ -74,6 +74,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:8080",
                 "http://localhost:3000",
+                "https://www.revoice.shop",
                 "https://revoice.shop",
                 "http://52.78.172.5:8080",
                 "https://re-voice.vercel.app"));

@@ -58,13 +58,21 @@ public class VoiceService {
 
             Adapter adapter = adapterService.findByUser(user);
 
-            Long adapterNumberToUse = (adapter.getVoiceModel() == voiceModel ? adapter.getAdapterNumber() : null);
+            Long adapterNumberToUse =
+                (adapter != null && adapter.getVoiceModel() == voiceModel)
+                        ? adapter.getAdapterNumber()
+                        : 0L;
+
+        System.out.println("adapterNumberToUse = " + adapterNumberToUse);
+
 
             CompletableFuture.supplyAsync(() -> {
                         String presignedUrl = s3FileService.generatePreSignGetUrl(request.getObjectKey(), bucketName);
+                        System.out.println("presignedUrl = " + presignedUrl);
                         return aiClientService.requestVoiceAnalysis(request.getEmitterId(), presignedUrl, voiceModel, adapterNumberToUse);
                     }, voiceExecutor)
                     .thenAccept(result -> {
+
                         emitterService.sendToEmitter(user.getId(), request.getEmitterId(),"complete", result);
                         saveVoiceAnalysis(user, request.getObjectKey(), result);
                         log.info("sse 결과 출력 성공");

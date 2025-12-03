@@ -26,11 +26,12 @@ public class AiClientService {
     public AiResultDTO.AiResultResponseDTO requestVoiceAnalysis(String emitterId, String presignedUrl, VoiceModel voiceModel, Long adapterNumberToUse) {
 
         String aiServerUrl = ServerUrl + voiceModel.toString().toLowerCase();
+        System.out.println("aiServerUrl = " + aiServerUrl);
 
         Map<String, Object> body = Map.of(
                 "audioUrl", presignedUrl,
                 "emitterId", emitterId,
-                "adapterNumber", adapterNumberToUse
+                "adapterId", adapterNumberToUse
         );
         log.info("ai 서버 요청 보낸 후");
 
