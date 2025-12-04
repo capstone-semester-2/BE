@@ -92,34 +92,24 @@ public class VoiceService {
     public VoiceDTO.VoiceListResponseDTO getVoiceList(User user, Long lastId, int size) {
 
         Long userId = user.getId();
+
         List<Voice> voices = (lastId == null)
                 ? voiceRepository.findFirstPage(userId, size)
                 : voiceRepository.findNextPage(userId, lastId, size);
 
+        if (voices == null) {
+            voices = List.of();
+        }
+
         int totalCount = voiceRepository.countByUserId(userId);
 
-        List<String> contents = voices.stream()
-                .map(v -> v.getTranslatedText().getContent())
+        List<VoiceDTO.VoiceDetailDTO> dtoList = voices.stream()
+                .map(VoiceDTO.VoiceDetailDTO::from)
                 .toList();
-
-        List<Dictionary> dictionaries = dictionaryService.findAllByGestureNameIn(contents);
-
-        Map<String, String> dictMap = dictionaries.stream()
-                .collect(Collectors.toMap(
-                        Dictionary::getGestureName,
-                        Dictionary::getObjectKey
-                ));
 
         return VoiceDTO.VoiceListResponseDTO.builder()
                 .totalCount(totalCount)
-                .voices(
-                        voices.stream()
-                                .map(voice -> VoiceDTO.VoiceDetailDTO.from(
-                                        voice,
-                                        dictMap.get(voice.getTranslatedText().getContent())
-                                ))
-                                .toList()
-                )
+                .voices(dtoList)
                 .build();
     }
 
