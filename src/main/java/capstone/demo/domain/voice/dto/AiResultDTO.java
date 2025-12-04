@@ -1,9 +1,6 @@
 package capstone.demo.domain.voice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Map;
 
@@ -12,6 +9,7 @@ public class AiResultDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    @ToString
     public static class AiResultResponseDTO {
         private String requestId; // uuid
         private String sha256;

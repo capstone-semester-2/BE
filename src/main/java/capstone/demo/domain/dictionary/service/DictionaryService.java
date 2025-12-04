@@ -64,9 +64,10 @@ public class DictionaryService {
         return dictionaryRepository.findAllByKeyword(keyword);
     }
 
-    public List<Dictionary> findAllByGestureNameIn(List<String> contents) {
-        return dictionaryRepository.findAllByGestureNameIn(contents);
+    public Dictionary getByGestureName(String gestureName) {
+        return dictionaryRepository.findByGestureName(gestureName).orElse(null);
     }
+
 
     public DictionaryBookmarkResponse toggleBookmark(User user, Long dictionaryId) {
 
