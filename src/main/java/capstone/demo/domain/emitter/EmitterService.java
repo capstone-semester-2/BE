@@ -1,6 +1,8 @@
 package capstone.demo.domain.emitter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -11,7 +13,10 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EmitterService {
+
+    private final ObjectMapper objectMapper;
 
     private final EmitterRepository emitterRepository;
     public SseEmitter connect(Long userId) {
@@ -46,6 +51,7 @@ public class EmitterService {
                     "event", eventName,
                     "data", data
             );
+            log.info("SSE payload = {}", objectMapper.writeValueAsString(payload));
 
             emitter.send(SseEmitter.event()
                     .name(eventName)

@@ -11,6 +11,7 @@ import capstone.demo.domain.fileload.dto.PreSignedUrlResponseDto;
 import capstone.demo.domain.translatedText.TranslatedText;
 import capstone.demo.domain.translatedText.service.TranslatedTextService;
 import capstone.demo.domain.user.entity.User;
+import capstone.demo.domain.voice.dto.AiResultMappingDTO;
 import capstone.demo.domain.voice.entity.Voice;
 import capstone.demo.domain.voice.VoiceRepository;
 import capstone.demo.domain.voice.dto.AiResultDTO;
@@ -21,6 +22,7 @@ import capstone.demo.domain.voice.entity.VoiceModel;
 import capstone.demo.global.apiPayload.code.status.ErrorStatus;
 import capstone.demo.global.apiPayload.exception.GeneralException;
 import capstone.demo.global.apiPayload.exception.handler.NotFoundHandler;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -47,6 +50,7 @@ public class VoiceService {
     private final DictionaryService dictionaryService;
     private final AdapterService adapterService;
 
+    private final ObjectMapper objectMapper;
     private final ThreadPoolTaskExecutor voiceExecutor;
 
     @Value("${amazon.aws.bucket}")
@@ -73,7 +77,20 @@ public class VoiceService {
                     }, voiceExecutor)
                     .thenAccept(result -> {
 
-                        emitterService.sendToEmitter(user.getId(), request.getEmitterId(),"complete", result);
+                        log.info("[5] thenAccept() 진입");
+                        System.out.println("result.toString() = " + result.toString());
+
+                        try {
+                            log.info("AI RESULT JSON = {}", objectMapper.writeValueAsString(result));
+                        } catch (Exception e) {
+                            log.error("JSON 직렬화 실패: {}", e.getMessage());
+                        }
+
+                        AiResultMappingDTO.AiResultMappingResponse mappingResponse = mapAiResult(result);
+
+
+
+                        emitterService.sendToEmitter(user.getId(), request.getEmitterId(),"complete", mappingResponse);
                         saveVoiceAnalysis(user, request.getObjectKey(), result);
                         log.info("sse 결과 출력 성공");
                     })
@@ -82,6 +99,8 @@ public class VoiceService {
                         log.info("sse 결과 출력 error");
                         return null;
                     });
+
+
 
         return AsyncResponseDTO.AsyncTranslateDTO.builder()
                 .message("번역이 진행중입니다.")
@@ -163,6 +182,36 @@ public class VoiceService {
 
         return AsyncResponseDTO.AsyncTranslateDTO.builder()
                 .message("모델 학습이 진행중입니다. 끝나면 알려드릴게요!")
+                .build();
+    }
+
+    public AiResultMappingDTO.AiResultMappingResponse mapAiResult(AiResultDTO.AiResultResponseDTO aiResult) {
+
+        String text = aiResult.getResult().get("text");
+        String[] words = text.split("\\s+");
+
+        log.info("띄어쓰기 나누기 완료");
+
+        List<AiResultMappingDTO.TextMapping> mappings = Arrays.stream(words)
+                .map(rawWord -> {
+
+                    String word = rawWord.replaceAll("[^가-힣A-Za-z0-9]", "");
+                    Dictionary dict = dictionaryService.getByGestureName(word);
+
+                    return AiResultMappingDTO.TextMapping.builder()
+                            .word(word)
+                            .exists(dict != null)
+                            .dictionaryId(dict != null ? dict.getId() : null)
+                            .objectKey(dict != null ? dict.getObjectKey() : null)
+                            .build();
+                })
+                .toList();
+
+        log.info("응답 매핑 완료");
+
+        return AiResultMappingDTO.AiResultMappingResponse.builder()
+                .requestId(aiResult.getRequestId())
+                .textMappings(mappings)
                 .build();
     }
 }
