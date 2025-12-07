@@ -37,7 +37,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
             nativeQuery = true)
     List<Dictionary> getNextPage(Long userId, Long lastId, int size);
 
-    Optional<Bookmark> findAllByUser(User user);
+    List<Bookmark> findAllByUser(User user);
 
     Optional<Bookmark> findByUserAndDictionaryId(User user, Long dictionaryId);
 }
