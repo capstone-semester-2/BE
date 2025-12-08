@@ -39,4 +39,13 @@ public class VoiceDTO {
                     .build();
         }
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class isLearnedVoiceDTO {
+        Boolean isLearned;
+    }
+
 }
