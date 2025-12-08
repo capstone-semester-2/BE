@@ -48,4 +48,15 @@ public class VoiceDTO {
         Boolean isLearned;
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class resetVoiceDTO {
+        String message;
+        Boolean isLearned;
+    }
+
+
+
 }

@@ -226,10 +226,23 @@ public class VoiceService {
     public VoiceDTO.isLearnedVoiceDTO isLearnedVoice(User user) {
         Adapter adapter = adapterService.findByUser(user);
 
+        System.out.println("adapter = " + adapter);
+
         return VoiceDTO.isLearnedVoiceDTO.builder()
                 .isLearned(adapter != null)
                 .build();
+    }
 
+    public VoiceDTO.resetVoiceDTO resetLearning(User user) {
+        adapterService.deleteByUser(user);
 
+        // s3 비우기 로직 추가
+
+        //
+
+        return VoiceDTO.resetVoiceDTO.builder()
+                .message("삭제 완료")
+                .isLearned(false)
+                .build();
     }
 }

@@ -25,6 +25,7 @@ public class Adapter extends BaseEntity {
     private User user;
 
     @Column(name = "voice_model")
+    @Enumerated(EnumType.STRING)
     private VoiceModel voiceModel;
 
     @Column(name = "adapter_number")
