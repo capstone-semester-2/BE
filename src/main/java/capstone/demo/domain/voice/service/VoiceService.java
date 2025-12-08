@@ -19,6 +19,7 @@ import capstone.demo.domain.voice.dto.AsyncResponseDTO;
 import capstone.demo.domain.fileload.dto.FileUploadCompleteDTO;
 import capstone.demo.domain.voice.dto.VoiceDTO;
 import capstone.demo.domain.voice.entity.VoiceModel;
+import capstone.demo.global.apiPayload.ApiResponse;
 import capstone.demo.global.apiPayload.code.status.ErrorStatus;
 import capstone.demo.global.apiPayload.exception.GeneralException;
 import capstone.demo.global.apiPayload.exception.handler.NotFoundHandler;
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -218,6 +220,29 @@ public class VoiceService {
         return AiResultMappingDTO.AiResultMappingResponse.builder()
                 .requestId(aiResult.getRequestId())
                 .textMappings(mappings)
+                .build();
+    }
+
+    public VoiceDTO.isLearnedVoiceDTO isLearnedVoice(User user) {
+        Adapter adapter = adapterService.findByUser(user);
+
+        System.out.println("adapter = " + adapter);
+
+        return VoiceDTO.isLearnedVoiceDTO.builder()
+                .isLearned(adapter != null)
+                .build();
+    }
+
+    public VoiceDTO.resetVoiceDTO resetLearning(User user) {
+        adapterService.deleteByUser(user);
+
+        // s3 비우기 로직 추가
+
+        //
+
+        return VoiceDTO.resetVoiceDTO.builder()
+                .message("삭제 완료")
+                .isLearned(false)
                 .build();
     }
 }

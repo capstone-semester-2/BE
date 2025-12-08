@@ -89,6 +89,29 @@ public class VoiceController {
         return ResponseEntity.ok(ApiResponse.onSuccess("삭제 완료"));
     }
 
+    @GetMapping("/voices/isLearned")
+    @Operation(summary = "사용자 음성 학습 여부 확인", description = "사용자의 음성 학습 여부를 확인합니다.")
+    public ResponseEntity<ApiResponse<VoiceDTO.isLearnedVoiceDTO>> isLearnedVoice(
+            @AuthenticationPrincipal AuthDetails authDetails
+    ){
+        return ResponseEntity.ok(
+                ApiResponse.onSuccess(voiceService.isLearnedVoice(authDetails.user()))
+        );
+    }
+
+
+    @DeleteMapping("/voices/reset-learning")
+    @Operation(summary = "사용자 음성 학습 초기화", description = "사용자의 음성 학습을 초기화합니다.")
+    public ResponseEntity<ApiResponse<VoiceDTO.resetVoiceDTO>> resetLearning(
+            @AuthenticationPrincipal AuthDetails authDetails
+    ) {
+
+        return ResponseEntity.ok(
+                ApiResponse.onSuccess(voiceService.resetLearning(authDetails.user()))
+        );
+    }
+
+
 
 
 }
