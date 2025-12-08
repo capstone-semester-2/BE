@@ -20,12 +20,15 @@ public class AiClientService {
 
     private final WebClient webClient;
 
-    @Value("${ai.server.url}")
-    private String ServerUrl;
+    @Value("${ai.server.translate-url}")
+    private String translateUrl;
+
+    @Value("${ai.server.train-url}")
+    private String trainUrl;
 
     public AiResultDTO.AiResultResponseDTO requestVoiceAnalysis(String emitterId, String presignedUrl, VoiceModel voiceModel, Long adapterNumberToUse) {
 
-        String aiServerUrl = ServerUrl + voiceModel.toString().toLowerCase();
+        String aiServerUrl = translateUrl + voiceModel.toString().toLowerCase();
         System.out.println("aiServerUrl = " + aiServerUrl);
 
         Map<String, Object> body = Map.of(
@@ -45,7 +48,9 @@ public class AiClientService {
 
 
     public AiResultDTO.AiLearningResultResponseDTO requestVoiceLearning(String emitterId, List<PreSignedUrlInfo> presignedUrls, VoiceModel voiceModel) {
-        String aiServerUrl = ServerUrl + "adapter-train";
+        String aiServerUrl = trainUrl + "adapter-train";
+
+        System.out.println("aiServerUrl = " + aiServerUrl);
 
         Map<String, Object> body = Map.of(
                 "engine", voiceModel.toString().toLowerCase(),

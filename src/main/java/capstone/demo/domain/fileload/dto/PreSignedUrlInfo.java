@@ -6,6 +6,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class PreSignedUrlInfo {
-    private Integer audioId;
     private String audioUrl;
+    private Integer audioId;
 }

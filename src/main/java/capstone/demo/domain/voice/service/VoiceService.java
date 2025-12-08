@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import static capstone.demo.domain.voice.entity.VoiceModel.CUSTOM;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -60,14 +62,17 @@ public class VoiceService {
             User user, FileUploadCompleteDTO.UploadCompleteRequest request, VoiceModel voiceModel) {
             log.info("ai 요청 준비");
 
-            Adapter adapter = adapterService.findByUser(user);
+            long adapterNumberToUse;
 
-            Long adapterNumberToUse =
-                (adapter != null && adapter.getVoiceModel() == voiceModel)
-                        ? adapter.getAdapterNumber()
-                        : 0L;
+            if(voiceModel == CUSTOM) {
+                Adapter adapter = adapterService.findByUser(user);
+                adapterNumberToUse =
+                        (adapter != null) ? adapter.getAdapterNumber() : 0L;
+            } else {
+                adapterNumberToUse = 0L;
+            }
 
-        System.out.println("adapterNumberToUse = " + adapterNumberToUse);
+            System.out.println("adapterNumberToUse = " + adapterNumberToUse);
 
 
             CompletableFuture.supplyAsync(() -> {
@@ -87,8 +92,6 @@ public class VoiceService {
                         }
 
                         AiResultMappingDTO.AiResultMappingResponse mappingResponse = mapAiResult(result);
-
-
 
                         emitterService.sendToEmitter(user.getId(), request.getEmitterId(),"complete", mappingResponse);
                         saveVoiceAnalysis(user, request.getObjectKey(), result);
@@ -170,6 +173,9 @@ public class VoiceService {
                     return aiClientService.requestVoiceLearning(request.getEmitterId(), presignedUrls, voiceModel);
                 }, voiceExecutor)
                 .thenAccept(result -> {
+                    log.info("요청후 result 출력");
+                    System.out.println("result = " + result);
+
                     emitterService.sendToEmitter(user.getId(), request.getEmitterId(),"complete", result);
                     adapterService.saveUsersAdapterId(user, result.getAdapterId(), voiceModel);
                     log.info("sse 결과 출력 성공");
