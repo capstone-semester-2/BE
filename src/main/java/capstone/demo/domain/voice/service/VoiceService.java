@@ -65,22 +65,35 @@ public class VoiceService {
             log.info("ai 요청 준비");
 
             long adapterNumberToUse;
+            VoiceModel finalModel = voiceModel;
 
-            if(voiceModel == CUSTOM) {
+        if (voiceModel == VoiceModel.CUSTOM) {
+
                 Adapter adapter = adapterService.findByUser(user);
-                adapterNumberToUse =
-                        (adapter != null) ? adapter.getAdapterNumber() : 0L;
-            } else {
+
+                if (adapter == null) {
+                    throw new GeneralException(ErrorStatus.NOT_FOUND_ADAPTER);
+                }
+
+                adapterNumberToUse = adapter.getAdapterNumber();
+
+                // CUSTOM → 실제 adapter model로 교체
+                finalModel = adapter.getVoiceModel();
+
+        } else {
                 adapterNumberToUse = 0L;
             }
 
-            System.out.println("adapterNumberToUse = " + adapterNumberToUse);
+            VoiceModel modelToUse = finalModel;
+
+
+        System.out.println("adapterNumberToUse = " + adapterNumberToUse);
 
 
             CompletableFuture.supplyAsync(() -> {
                         String presignedUrl = s3FileService.generatePreSignGetUrl(request.getObjectKey(), bucketName);
                         System.out.println("presignedUrl = " + presignedUrl);
-                        return aiClientService.requestVoiceAnalysis(request.getEmitterId(), presignedUrl, voiceModel, adapterNumberToUse);
+                        return aiClientService.requestVoiceAnalysis(request.getEmitterId(), presignedUrl, modelToUse, adapterNumberToUse);
                     }, voiceExecutor)
                     .thenAccept(result -> {
 

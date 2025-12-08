@@ -23,6 +23,10 @@ public enum ErrorStatus implements BaseErrorCode {
     NOT_FOUND_DICTIONARY(HttpStatus.NOT_FOUND,"DICTIONARY404","해당 사전 내용을 찾을 수 없습니다."),
     NOT_FOUND_VOICE(HttpStatus.NOT_FOUND,"VOICE404","해당 사용자 음성 내용을 찾을 수 없습니다."),
 
+    //500
+    NOT_FOUND_ADAPTER(HttpStatus.NOT_FOUND,"ADAPTER501","adapter가 필요합니다."),
+
+
     // 로그인 관련 응답
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "LOGIN4001", "토큰이 유효하지 않습니다."),
     LOGIN_TYPE_INVALID(HttpStatus.BAD_REQUEST,"LOGIN4002","로그인 타입이 존재하지 않습니다."),
